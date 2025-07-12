@@ -1,12 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import Sidebar from "./external/editor/components/sidebar";
 import { Code } from "./external/editor/editor/code";
-import styled from "@emotion/styled";
 import { File, buildFileTree, RemoteFile } from "./external/editor/utils/file-manager";
 import { FileTree } from "./external/editor/components/file-tree";
 import { Socket } from "socket.io-client";
 
-// credits - https://codesandbox.io/s/monaco-tree-pec7u
 export const Editor = ({
     files,
     onSelect,
@@ -23,27 +21,27 @@ export const Editor = ({
   }, [files]);
 
   useEffect(() => {
-    if (!selectedFile) {
+    if (!selectedFile && rootDir.files.length > 0) {
       onSelect(rootDir.files[0])
     }
-  }, [selectedFile])
+  }, [selectedFile, rootDir.files, onSelect])
 
+  // If we're in the main editor view (not sidebar), show only the code editor
+  if (selectedFile && !files.length) {
+    return <Code socket={socket} selectedFile={selectedFile} />;
+  }
+
+  // If we're in the sidebar view, show the file tree
   return (
-    <div>
-      <Main>
-        <Sidebar>
-          <FileTree
-            rootDir={rootDir}
-            selectedFile={selectedFile}
-            onSelect={onSelect}
-          />
-        </Sidebar>
-        <Code socket={socket} selectedFile={selectedFile} />
-      </Main>
+    <div className="h-full flex">
+      <Sidebar>
+        <FileTree
+          rootDir={rootDir}
+          selectedFile={selectedFile}
+          onSelect={onSelect}
+        />
+      </Sidebar>
+      {selectedFile && <Code socket={socket} selectedFile={selectedFile} />}
     </div>
   );
 };
-
-const Main = styled.main`
-  display: flex;
-`;

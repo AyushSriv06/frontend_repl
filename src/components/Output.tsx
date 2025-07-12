@@ -5,7 +5,15 @@ export const Output = () => {
     const replId = searchParams.get('replId') ?? '';
     const INSTANCE_URI = `http://${replId}.autogpt-cloud.com`;
 
-    return <div style={{height: "40vh", background: "white"}}>
-        <iframe width={"100%"} height={"100%"} src={`${INSTANCE_URI}`} />
-    </div>
+    return (
+        <div className="h-full bg-[#0d1117] border border-[#30363d] rounded-lg overflow-hidden">
+            <iframe 
+                width="100%" 
+                height="100%" 
+                src={INSTANCE_URI}
+                className="border-0"
+                title="Application Output"
+            />
+        </div>
+    );
 }
